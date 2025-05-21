@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -28,44 +27,42 @@ const HistoryPage = () => {
       
       <main className="flex-1 flex flex-col items-center px-6 pb-8">
         {gameHistory.length > 0 ? (
-          gameHistory.map((entry, index) => (
-            <div 
-              key={entry.id}
-              className={`border ${
-                entry.status === 'Win' ? 'border-green-500' : 'border-red-500'
-              } rounded-md mb-4 w-full max-w-md overflow-hidden`}
-            >
-              <table className="w-full text-left">
-                <thead>
-                  <tr className={`${
-                    entry.status === 'Win' ? 'bg-green-50' : 'bg-red-50'
+          <div 
+            key={gameHistory[gameHistory.length - 1].id}
+            className={`border ${
+              gameHistory[gameHistory.length - 1].status === 'Win' ? 'border-green-500' : 'border-red-500'
+            } rounded-md mb-4 w-full max-w-md overflow-hidden`}
+          >
+            <table className="w-full text-left">
+              <thead>
+                <tr className={`${
+                  gameHistory[gameHistory.length - 1].status === 'Win' ? 'bg-green-50' : 'bg-red-50'
+                }`}>
+                  <th className="py-2 px-4 border-r border-gray-300">Level</th>
+                  <th className="py-2 px-4 border-r border-gray-300">Attempts</th>
+                  <th className="py-2 px-4 border-r border-gray-300">Time</th>
+                  <th className="py-2 px-4">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="py-2 px-4 border-r border-gray-300">{gameHistory[gameHistory.length - 1].level.toString().padStart(2, '0')}</td>
+                  <td className="py-2 px-4 border-r border-gray-300">{gameHistory[gameHistory.length - 1].attempts.toString().padStart(2, '0')}</td>
+                  <td className="py-2 px-4 border-r border-gray-300">{gameHistory[gameHistory.length - 1].time}</td>
+                  <td className={`py-2 px-4 ${
+                    gameHistory[gameHistory.length - 1].status === 'Win' ? 'text-green-500' : 'text-red-500'
                   }`}>
-                    <th className="py-2 px-4 border-r border-gray-300">Level</th>
-                    <th className="py-2 px-4 border-r border-gray-300">Attempts</th>
-                    <th className="py-2 px-4 border-r border-gray-300">Time</th>
-                    <th className="py-2 px-4">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="py-2 px-4 border-r border-gray-300">{entry.level.toString().padStart(2, '0')}</td>
-                    <td className="py-2 px-4 border-r border-gray-300">{entry.attempts.toString().padStart(2, '0')}</td>
-                    <td className="py-2 px-4 border-r border-gray-300">{entry.time}</td>
-                    <td className={`py-2 px-4 ${
-                      entry.status === 'Win' ? 'text-green-500' : 'text-red-500'
-                    }`}>
-                      {entry.status}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className={`text-center py-2 ${
-                entry.status === 'Win' ? 'text-green-500' : 'text-red-500'
-              }`}>
-                <button onClick={() => navigate('/review')}>Review</button>
-              </div>
+                    {gameHistory[gameHistory.length - 1].status}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className={`text-center py-2 ${
+              gameHistory[gameHistory.length - 1].status === 'Win' ? 'text-green-500' : 'text-red-500'
+            }`}>
+              <button onClick={() => navigate('/review')}>Review</button>
             </div>
-          ))
+          </div>
         ) : (
           <p className="text-gray-500 mt-8">No history available yet. Play some games!</p>
         )}

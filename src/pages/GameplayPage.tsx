@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GameHeader from '@/components/GameHeader';
@@ -14,20 +13,21 @@ const GameplayPage = () => {
     setSelectedRequirements,
     timeRemaining,
     startTimer,
-    isTimerRunning
+    isTimerRunning,
+    startLevel
   } = useGame();
 
   const [showError, setShowError] = useState(false);
 
-  // Start timer when component mounts
+  // Start level and timer when component mounts if no problemStatement
   useEffect(() => {
-    if (!isTimerRunning) {
-      startTimer();
+    if (!problemStatement) {
+      startLevel(gameState.currentLevel);
     }
-  }, [isTimerRunning, startTimer]);
+  }, [problemStatement, startLevel, gameState.currentLevel]);
 
   if (!problemStatement) {
-    return navigate('/problem');
+    return null;
   }
 
   const toggleRequirement = (requirementId: number) => {
@@ -68,9 +68,13 @@ const GameplayPage = () => {
     navigate('/problem');
   };
 
+  const handleMenuToggle = () => {
+    navigate('/menu');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <GameHeader showMenu={true} />
+      <GameHeader showMenu={true} onMenuClick={handleMenuToggle} />
       
       <div className="px-6 mb-4 flex items-center">
         <button 
@@ -92,7 +96,7 @@ const GameplayPage = () => {
       
       <main className="flex-1 flex flex-col px-6 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6 border border-gray-300">
-          <div className="overflow-y-auto max-h-60 md:max-h-80">
+          <div className="overflow-y-auto">
             {problemStatement.requirements.map((req) => (
               <div key={req.id} className={`border-b border-gray-100 ${selectedRequirements.includes(req.id) ? 'bg-gray-200' : ''}`}>
                 <RequirementItem 
@@ -107,7 +111,7 @@ const GameplayPage = () => {
           <div className="border-l border-gray-300 p-4">
             <div className="mb-4">
               <h3 className="text-center font-medium mb-1">Goal</h3>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1 max-w-xs mx-auto">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                   <div key={num} className="w-full aspect-square bg-green-500"></div>
                 ))}

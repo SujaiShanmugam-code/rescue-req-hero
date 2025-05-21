@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GameHeader from '@/components/GameHeader';
@@ -14,21 +13,27 @@ const ResultsPage = () => {
     selectedRequirements,
     completeLevel,
     timeRemaining,
-    stopTimer
+    stopTimer,
+    gameHistory
   } = useGame();
   
   const [isWin, setIsWin] = useState(false);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control menu visibility
 
   useEffect(() => {
+    console.log('ResultsPage useEffect running'); // Log when this effect runs
+
     if (!problemStatement) {
       navigate('/problem');
       return;
     }
     
-    // Stop the timer
+    // Ensure the timer is stopped when the results page is displayed
+    console.log('Calling stopTimer from ResultsPage'); // Log before calling stopTimer
     stopTimer();
+    console.log('stopTimer called'); // Log after calling stopTimer
     
     // Calculate results
     const correctRequirements = problemStatement.requirements
@@ -44,28 +49,50 @@ const ResultsPage = () => {
     setIsWin(win);
     
     // Calculate score
-    const baseScore = selectedCorrectCount * 10;
-    const timeBonus = timeRemaining ? Math.floor(timeRemaining / 10) : 0;
-    const finalScore = baseScore + timeBonus;
+    let finalScore = 0; // Initialize final score
+
+    console.log('Calculating score. currentLevel:', gameState.currentLevel, 'win:', win); // Log score calculation conditions
+    if (gameState.currentLevel === 1 && win) {
+      finalScore = 100;
+      console.log('Level 1 win, setting score to 100'); // Log when score is set to 100
+    } else {
+      // Existing score calculation for other levels or losses on level 1
+      const baseScore = selectedCorrectCount * 10;
+      const timeBonus = timeRemaining ? Math.floor(timeRemaining / 10) : 0; // Use timeRemaining for bonus if needed
+      finalScore = baseScore + timeBonus;
+      console.log('Calculating score for loss/other level. Base:', baseScore, 'Time Bonus:', timeBonus, 'Final:', finalScore); // Log other score calculation
+    }
+
     setScore(finalScore);
-    
-    // Save results to game context
+    console.log('Score set to:', finalScore); // Log the score that is set
+
+    // Calculate time spent
     const timeSpent = problemStatement.timeLimit - (timeRemaining || 0);
     const mins = Math.floor(timeSpent / 60);
     const secs = timeSpent % 60;
     const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    console.log('Time spent:', timeStr); // Log time spent
     
+    // Save results to game context
     completeLevel({
       level: gameState.currentLevel,
       attempts: gameState.attempts,
       score: finalScore,
-      time: timeStr,
+      time: timeStr, // Pass the calculated time spent
       isWin: win,
       selectedRequirements,
       correctRequirements,
     });
+    console.log('completeLevel called with score:', finalScore, 'and time:', timeStr); // Log completeLevel call with time
     
-  }, [problemStatement, selectedRequirements, navigate, gameState, completeLevel, timeRemaining, stopTimer]);
+    // Cleanup function to ensure timer is stopped on unmount as well (should be handled by context, but adding here for debug)
+    return () => {
+      console.log('ResultsPage useEffect cleanup: Calling stopTimer');
+      stopTimer();
+    };
+
+  }, [problemStatement, selectedRequirements, navigate, gameState, completeLevel, stopTimer, timeRemaining]); // Added timeRemaining to dependencies
 
   const handleRetry = () => {
     navigate('/gameplay');
@@ -79,18 +106,29 @@ const ResultsPage = () => {
     navigate('/review');
   };
 
+  // Function to toggle menu visibility
+  const handleMenuToggle = () => {
+    navigate('/menu');
+  };
+
+  // Get the time from the most recent game history entry
+  const latestGameHistoryEntry = gameHistory.length > 0 ? gameHistory[0] : null; // Get the latest history entry
+  const latestGameTime = latestGameHistoryEntry ? latestGameHistoryEntry.time : '00:00';
+  const problemTimeLimit = problemStatement?.timeLimit ? Math.floor(problemStatement.timeLimit / 60).toString().padStart(2, '0') + ':' + (problemStatement.timeLimit % 60).toString().padStart(2, '0') : '00:00';
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <GameHeader showMenu={true} />
+      <GameHeader 
+        showMenu={true} 
+        onMenuClick={handleMenuToggle} // Pass the toggle function
+      />
       
       <div className="px-6 mb-4">
         <h2 className="font-medium text-center">
           Summary L : {gameState.currentLevel} {" "}
-          {gameState.attempts > 0 && (
-            <span className="text-gray-600 text-sm">
-              {gameState.attempts.toString().padStart(2, '0')}:{Math.floor(Math.random() * 60).toString().padStart(2, '0')}
-            </span>
-          )}
+          <span className="text-gray-600 text-sm">
+            {latestGameTime} / {problemTimeLimit}
+          </span>
         </h2>
       </div>
       

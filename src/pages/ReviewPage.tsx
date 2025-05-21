@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import GameHeader from '@/components/GameHeader';
@@ -18,9 +17,13 @@ const ReviewPage = () => {
     navigate('/results');
   };
 
+  const handleMenuToggle = () => {
+    navigate('/menu');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <GameHeader showMenu={true} />
+      <GameHeader showMenu={true} onMenuClick={handleMenuToggle} />
       
       <div className="px-6 mb-4">
         <h2 className="text-red-500 text-center">Review Your Answer (Read Only)</h2>
@@ -43,7 +46,7 @@ const ReviewPage = () => {
           <div className="border-l border-gray-300 p-4">
             <div className="mb-4">
               <h3 className="text-center font-medium mb-1">Goal</h3>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1 max-w-xs mx-auto">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                   <div key={num} className="w-full aspect-square bg-green-500"></div>
                 ))}

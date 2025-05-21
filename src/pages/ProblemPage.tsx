@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import GameHeader from '@/components/GameHeader';
@@ -17,9 +16,13 @@ const ProblemPage = () => {
     navigate('/gameplay');
   };
 
+  const handleMenuToggle = () => {
+    navigate('/menu');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <GameHeader showMenu={true} />
+      <GameHeader showMenu={true} onMenuClick={handleMenuToggle} />
       
       <main className="flex-1 flex flex-col items-center px-6 pb-8">
         <h2 className="text-gray-600 text-lg mb-4">Problem statement</h2>
@@ -56,7 +59,7 @@ const ProblemPage = () => {
           <div className="grid grid-cols-2 gap-4 mb-2">
             <div>
               <h4 className="mb-2 text-center">Win all 6 cells</h4>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1 w-40 mx-auto">
                 {[1, 2, 3, 4, 5, 6].map(num => (
                   <div key={num} className="w-full aspect-square bg-green-500"></div>
                 ))}
@@ -66,7 +69,7 @@ const ProblemPage = () => {
             
             <div>
               <h4 className="mb-2 text-center">Lose if less than 6 cells</h4>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-3 gap-1 w-40 mx-auto">
                 {[1, 2, 3, 4, 5].map(num => (
                   <div key={num} className="w-full aspect-square bg-green-500"></div>
                 ))}
