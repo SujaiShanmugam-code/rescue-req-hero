@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import GameHeader from '@/components/GameHeader';
-import HeroIcon from '@/components/HeroIcon';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -42,7 +41,7 @@ const RegisterPage = () => {
       <main className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         <p className="text-gray-600 mb-6">Be a Hero</p>
         
-        <HeroIcon />
+        <img src="/image.png" alt="Underground Hero Logo" className="mx-auto mb-6 w-32" />
         
         <form className="w-full max-w-sm md:max-w-md mt-8" onSubmit={handleRegister}>
           <div className="mb-4">
